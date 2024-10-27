@@ -1,0 +1,7 @@
+{
+    "VITE_API_ETHKEY": "your_eth_key_here",
+    "VITE_API_BASEKEY": "your_base_key_here",
+    "VITE_API_ARBKEY": "your_arbitrum_key_here",
+    "VITE_API_OPKEY": "your_optimism_key_here",
+    "VITE_API_LINEAKEY": "your_linea_key_here"
+}
