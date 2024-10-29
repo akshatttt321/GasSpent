@@ -5,23 +5,22 @@ import './App.css'
 
 function App() 
 {
-  const [className, setClassName] = useState('');
-  const[timeStamp,setTimeStamp] = useState()  
-  const[TransactionsArray,setTransactionArray] = useState([])
-  const [showTransactions,setShowTransactions] = useState(false)
-  const ETHapiKey = import.meta.env.VITE_API_ETHKEY;
+const [className, setClassName] = useState('');
+const[timeStamp,setTimeStamp] = useState()  
+const[TransactionsArray,setTransactionArray] = useState([])
+const [showTransactions,setShowTransactions] = useState(false)
+const ETHapiKey = import.meta.env.VITE_API_ETHKEY;
 const BaseapiKey = import.meta.env.VITE_API_BASEKEY;
 const ArbapiKey = import.meta.env.VITE_API_ARBKEY;
 const OPapiKey = import.meta.env.VITE_API_OPKEY;
 const LineaapiKey = import.meta.env.VITE_API_LINEAKEY;
-console.log(ETHapiKey)
-  const [EthPrice,setEthPrice] = useState()
-  const [Gas,setGas] = useState(0)
-  const [transaction,setTransaction] = useState(undefined) 
-  const [address,setAddress] = useState()
-  const [chain,setChain] = useState("Ethereum")
-  const [secondDiv,setSecondDiv] = useState(false)
-  const options =[
+const [EthPrice,setEthPrice] = useState()
+const [Gas,setGas] = useState(0)
+const [transaction,setTransaction] = useState(undefined) 
+const [address,setAddress] = useState()
+const [chain,setChain] = useState("Ethereum")
+const [secondDiv,setSecondDiv] = useState(false)
+const options =[
     { value: 'Ethereum', label: <><img className='w-5 h-5' src="Ethereum.png" alt="ETH" /> </> },
     { value: 'Base', label: <><img className='w-5 h-5' src="Base.png" alt="Base" /> </> },
     { value: 'Optimism', label: <><img className='w-5 h-5' src="Optimism.png" alt="Optimism" /> </> },
@@ -208,7 +207,6 @@ const handleShowTransactions = async()=>{
   }
     
   fetchTimeStamp()
-  console.log(timeStamp)
 }
 }
 
@@ -314,7 +312,7 @@ useEffect(() => {
     </div>
     <div className='flex flex-col pb-2 border-r-2 px-2 justify-center items-center mr-4'>
       <h1 className='my-2 font-mono font-semibold mr-2'>TimeStamp</h1>
-      {transaction.result.map((hash,index)=><p key={index} className='my-2 w-40 overflow-hidden text-ellipsis whitespace-nowrap mr-4'>{timeStamp?(new Date(parseInt(timeStamp[index],16)*1000)).toLocaleString():"Fetching..."}</p>)}
+      {transaction.result.map((hash,index)=><p key={index} className='my-2 w-40 overflow-hidden text-ellipsis whitespace-nowrap mr-4'>{timeStamp?(new Date(parseInt(timeStamp[index],16)*1000)).toLocaleString("en-GB",{hour12:false}):"Fetching..."}</p>)}
     </div>
     </div>)}
     </div>
