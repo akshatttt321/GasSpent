@@ -5,6 +5,7 @@ import './App.css'
 
 function App() 
 {
+const [Value,setValue] = useState([])
 const [className, setClassName] = useState('');
 const[timeStamp,setTimeStamp] = useState()  
 const[TransactionsArray,setTransactionArray] = useState([])
@@ -45,42 +46,42 @@ const options =[
     try{
       let data
       if(chain==='Ethereum'){
-      const response = await fetch(`https://api.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${trans[i]}&apikey=${ETHapiKey}`, {signal})      
+      const response = await fetch(`https://api.etherscan.io/api?module=proxy&action=eth_getTransactionReceipt&txhash=${trans[i]}&apikey=${ETHapiKey}`, {signal})      
       if(!response.ok)
       throw new Error(`HTTP ERROR! ${response.status}`)
       data = await response.json() 
       transactionArray.push(data)
 }
 if(chain==='Base'){
-  const response = await fetch(`https://api.basescan.org/api?module=proxy&action=eth_getTransactionByHash&txhash=${trans[i]}&apikey=${BaseapiKey}`, {signal})
+  const response = await fetch(`https://api.basescan.org/api?module=proxy&action=eth_getTransactionReceipt&txhash=${trans[i]}&apikey=${BaseapiKey}`, {signal})
   if(!response.ok)
   throw new Error(`HTTP ERROR! ${response.status}`)
   data = await response.json()
   transactionArray.push(data)
 }
 if(chain==='Optimism'){
-  const response = await fetch(`https://api-optimistic.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${trans[i]}&apikey=${OPapiKey}`,  {signal})
+  const response = await fetch(`https://api-optimistic.etherscan.io/api?module=proxy&action=eth_getTransactionReceipt&txhash=${trans[i]}&apikey=${OPapiKey}`,  {signal})
   if(!response.ok)
   throw new Error(`HTTP ERROR! ${response.status}`)
   data = await response.json()
   transactionArray.push(data)
 }
 if(chain==='Arbitrum'){
-  const response = await fetch(`https://api.arbiscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${trans[i]}&apikey=${ArbapiKey}`,  {signal})
+  const response = await fetch(`https://api.arbiscan.io/api?module=proxy&action=eth_getTransactionReceipt&txhash=${trans[i]}&apikey=${ArbapiKey}`,  {signal})
   if(!response.ok)
   throw new Error(`HTTP ERROR! ${response.status}`)
   data = await response.json()
   transactionArray.push(data)
 }
 if(chain==='Linea'){
-  const response = await fetch(`https://api.lineascan.build/api?module=proxy&action=eth_getTransactionByHash&txhash=${trans[i]}&apikey=${LineaapiKey}`,  {signal})
+  const response = await fetch(`https://api.lineascan.build/api?module=proxy&action=eth_getTransactionReceipt&txhash=${trans[i]}&apikey=${LineaapiKey}`,  {signal})
   if(!response.ok)
   throw new Error(`HTTP ERROR! ${response.status}`)
   data = await response.json()
   transactionArray.push(data)
 }
-       let gas = parseInt(data.result.gas)
-       let gasprice = parseInt(data.result.gasPrice)
+       let gas = parseInt(data.result.gasUsed)
+       let gasprice = parseInt(data.result.effectiveGasPrice)
        let totalCost = gas*gasprice
        let totalCostEther = totalCost/1e18;
        totalgas = totalgas+totalCostEther;
@@ -106,8 +107,8 @@ if(chain==='Linea'){
   },[transaction])
 
   const handleSubmit=async()=> {
-    setTransactionArray()
     setGas(0)
+    setValue()
     setTimeStamp()
     setShowTransactions(false)
     if(address!=undefined)
@@ -183,7 +184,6 @@ if(chain==='Linea'){
 }
 const handleShowTransactions = async()=>{
   setShowTransactions(!showTransactions)
-  if(!timeStamp){
   const fetchTimeStamp = async()=>{
     let timestamp = []
     let response
@@ -202,12 +202,12 @@ const handleShowTransactions = async()=>{
     throw new Error(`HTTP ERROR! ${response.status}`)
     const data2 = await response.json()
     timestamp.push(data2.result.timestamp)
+    console.log(data2)
   }
+
   setTimeStamp(timestamp)
   }
-    
   fetchTimeStamp()
-}
 }
 
 useEffect(() => {
@@ -222,13 +222,67 @@ useEffect(() => {
   }
 }, [showTransactions]);
 
+useEffect(() => {
+const fetchValue = async()=>{
+    let transactionArray = []
+    const trans = transaction?transaction.result.map(hash=>hash.hash):''
+      let i;
+      for(i=0;i<trans.length;i++){
+    try{
+      let data
+      if(chain==='Ethereum'){
+      const response = await fetch(`https://api.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${trans[i]}&apikey=${ETHapiKey}`)      
+      if(!response.ok)
+      throw new Error(`HTTP ERROR! ${response.status}`)
+      data = await response.json()
+      console.log(data) 
+      transactionArray.push(data)
+}
+if(chain==='Base'){
+  const response = await fetch(`https://api.basescan.org/api?module=proxy&action=eth_getTransactionByHash&txhash=${trans[i]}&apikey=${BaseapiKey}`)
+  if(!response.ok)
+  throw new Error(`HTTP ERROR! ${response.status}`)
+  data = await response.json()
+  transactionArray.push(data)
+}
+if(chain==='Optimism'){
+  const response = await fetch(`https://api-optimistic.etherscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${trans[i]}&apikey=${OPapiKey}`)
+  if(!response.ok)
+  throw new Error(`HTTP ERROR! ${response.status}`)
+  data = await response.json()
+  transactionArray.push(data)
+}
+if(chain==='Arbitrum'){
+  const response = await fetch(`https://api.arbiscan.io/api?module=proxy&action=eth_getTransactionByHash&txhash=${trans[i]}&apikey=${ArbapiKey}`)
+  if(!response.ok)
+  throw new Error(`HTTP ERROR! ${response.status}`)
+  data = await response.json()
+  transactionArray.push(data)
+}
+if(chain==='Linea'){
+  const response = await fetch(`https://api.lineascan.build/api?module=proxy&action=eth_getTransactionByHash&txhash=${trans[i]}&apikey=${LineaapiKey}`)
+  if(!response.ok)
+  throw new Error(`HTTP ERROR! ${response.status}`)
+  data = await response.json()
+  transactionArray.push(data)
+}
+   }
+      catch (error){
+       console.error("fetch error",error)
+    }
+  }
+  setValue(transactionArray)
+}
+  fetchValue()
+},[TransactionsArray])
+
     return (
       <div className={`${showTransactions?"move-up":'move-down'} h-screen ${className}`} 
       >
-    <div className={`bg-gray-900 flex flex-col h-screen w-screen justify-center items-center`}>
-        <h1 className='text-white font-semibold font-mono text-2xl mt-10 underline underline-offset-[16px] decoration-dashed decoration-gray-500 border-x-2 border-t-2 border-gray-500 p-2'>Calculate Your Total Gas Expenditure</h1>
-      <div className={`bg-gray-900 flex h-full w-full justify-center items-center `}>
-        <div className={`bg-zinc-800 h-[50vh] flex flex-col w-[50vw] justify-center items-center rounded-lg  ${secondDiv?"move-aside":''} ${secondDiv?"ml-20":''} transition-all`
+    <div className={`bg-[#111827] flex flex-col h-screen w-screen justify-center items-center`}>
+        <h1 className='text-white font-semibold font-mono text-2xl mt-10 underline underline-offset-[16px] decoration-dashed decoration-[#6b7280] border-x-2 border-t-2 border-[#6b7280] p-2'>Calculate Your Total Gas Expenditure</h1>
+      <div className={`bg-[#111827] flex h-full w-full justify-center items-center `}>
+        <div className={`bg-[#27272a] h-[50vh] flex flex-col w-[50vw] justify-center items-center rounded-lg  ${secondDiv?"move-aside":''} ${secondDiv?"ml-20":''} transition-all`
       } style={{}}>
         <div className='flex justify-center items-center'>
         <div className='flex flex-col'>
@@ -250,7 +304,7 @@ useEffect(() => {
           className='mt-6' options={options} />
           </div>
           <div className=''>
-          <button className=' font-serif font-semibold text-lg m-2 flex items-center justify-center w-32 h-10 bg-zinc-600 rounded-lg text-gray-200 hover:shadow-md hover:shadow-gray-500'onClick={handleSubmit}>
+          <button className=' font-serif font-semibold text-lg m-2 flex items-center justify-center w-32 h-10 bg-[#52525b] rounded-lg text-gray-200 hover:shadow-md hover:shadow-gray-500'onClick={handleSubmit}>
             Submit
           </button>
           </div>
@@ -271,10 +325,10 @@ useEffect(() => {
         )
       }
         </div>
-        {Gas!=0 && <button className={`${showTransactions?'w-40 h-10 text-2xl':''} button1 text-white text-xl font-serif hover:underline hover:underline-offset-4 hover:text-blue-600`}
+        {Gas!=0 && <button className={`${showTransactions?'w-40 h-10 text-2xl':''} button1 text-white text-xl font-serif ${Value?'hover:underline':''} ${Value?'hover:underline-offset-4':''} ${Value?'hover:text-blue-600':''}`}
         style={{transition:'fadeIN 2s'}}
-        onClick={handleShowTransactions}
-        >{showTransactions?"Click here to hide transactions":"Click here to show transactions"}</button>
+        onClick={Value?handleShowTransactions:undefined}
+        >{Value?showTransactions?"Click here to hide transactions":"Click here to show transactions":"Fetching Your Transaction Please Wait..."}</button>
         }
     </div>
     { transaction && TransactionsArray && (<div className={` ${showTransactions?'goOpaque':'goTransparent'} flex border-y-2 justify-center items-center text-white`}>
@@ -288,31 +342,30 @@ useEffect(() => {
     </div>
     <div className='flex flex-col pb-2   border-r-2 px-2 justify-center items-center mr-4'>
       <h1 className='my-2 font-mono font-semibold'>From</h1>
-      {transaction.result.map((hash,index)=><p key={index} className='my-2 w-40 overflow-hidden text-ellipsis whitespace-nowrap'>{TransactionsArray[index].result.from}</p>)}
+      {transaction.result.map((hash,index)=><p key={index} className='my-2 w-40 overflow-hidden text-ellipsis whitespace-nowrap'>{TransactionsArray[index]?.result.from}</p>)}
     </div>
     <div className='flex flex-col pb-2  border-r-2 px-2 justify-center items-center mr-4'>
       <h1 className='my-2 font-mono font-semibold'>To</h1>
-      {transaction.result.map((hash,index)=><p key={index} className={TransactionsArray[index].result.to?'my-2 w-40 overflow-hidden text-ellipsis whitespace-nowrap':'my-2 w-40 overflow-hidden text-center text-ellipsis whitespace-nowrap'}>{TransactionsArray[index].result.to?TransactionsArray[index].result.to:'-'}</p>)}
+      {transaction.result.map((hash,index)=><p key={index} className={TransactionsArray[index]?.result.to?'my-2 w-40 overflow-hidden text-ellipsis whitespace-nowrap':'my-2 w-40 overflow-hidden text-center text-ellipsis whitespace-nowrap'}>{TransactionsArray[index]?.result.to?TransactionsArray[index]?.result.to:'-'}</p>)}
     </div>
     <div className='flex flex-col pb-2  border-r-2 px-2 justify-center items-center mr-4'>
       <h1 className='my-2 font-mono font-semibold whitespace-nowrap text-center w-36 -ml-4'>Trx Value(USD)</h1>
-      {transaction.result.map((hash,index)=><p key={index} className={((parseInt(TransactionsArray[index].result.value)/1e18)*EthPrice).toFixed(5)==0?'text-center my-2 w-20 overflow-hidden text-ellipsis -ml-2 whitespace-nowrap':'text-center -ml-2 my-2 w-20 overflow-hidden text-ellipsis whitespace-nowrap'}>{((parseInt(TransactionsArray[index].result.value)/1e18)*EthPrice).toFixed(10)==0?"Null":
-        ((parseInt(TransactionsArray[index].result.value)/1e18)*EthPrice)<0?
-        ((parseInt(TransactionsArray[index].result.value)/1e18)*EthPrice).toPrecision(5):
-        ((parseInt(TransactionsArray[index].result.value)/1e18)*EthPrice).toPrecision(8)}</p>)}
+      {transaction.result.map((hash,index)=><p key={index} 
+      className={'text-center my-2 w-20 overflow-hidden text-ellipsis -ml-2 whitespace-nowrap'}>
+        {Value? ((parseInt(Value[index]?.result?.value)/1e18)*EthPrice).toFixed(5):"Fetching..."}
+      </p>)}
     </div>
-
     <div className='flex flex-col pb-2  border-r-2 px-2 justify-center items-center mr-4'>
       <h1 className='my-2 font-mono font-semibold w-40'>Gas used in USD</h1>
-      {transaction.result.map((hash,index)=><p key={index} className='my-2 w-20 overflow-hidden text-ellipsis whitespace-nowrap'>{((parseInt((TransactionsArray[index].result.gas)*parseInt(TransactionsArray[index].result.gasPrice))/1e18)*EthPrice).toFixed(5)}</p>)}
+      {transaction.result.map((hash,index)=><p key={index} className='my-2 w-20 overflow-hidden text-ellipsis whitespace-nowrap'>{((parseInt((TransactionsArray[index]?.result.gasUsed)*parseInt(TransactionsArray[index]?.result.effectiveGasPrice))/1e18)*EthPrice).toFixed(5)}</p>)}
     </div>
     <div className='flex flex-col pb-2  border-r-2 px-2 justify-center items-center mr-4'>
       <h1 className='my-2 font-mono font-semibold w-40'>Gas used in ETH</h1>
-      {transaction.result.map((hash,index)=><p key={index} className='my-2 w-20 text-ellipsis whitespace-nowrap'>{(parseInt((TransactionsArray[index].result.gas)*parseInt(TransactionsArray[index].result.gasPrice))/1e18).toFixed(5)<0.00001?"<0.00001":(parseInt((TransactionsArray[index].result.gas)*parseInt(TransactionsArray[index].result.gasPrice))/1e18).toFixed(5)}</p>)}
+      {transaction.result.map((hash,index)=><p key={index} className='my-2 w-20 text-ellipsis whitespace-nowrap'>{(parseInt((TransactionsArray[index]?.result.gasUsed)*parseInt(TransactionsArray[index]?.result.effectiveGasPrice))/1e18).toFixed(5)<0.00001?"<0.00001":(parseInt((TransactionsArray[index]?.result.gasUsed)*parseInt(TransactionsArray[index]?.result.effectiveGasPrice))/1e18).toFixed(5)}</p>)}
     </div>
     <div className='flex flex-col pb-2 border-r-2 px-2 justify-center items-center mr-4'>
       <h1 className='my-2 font-mono font-semibold mr-2'>TimeStamp</h1>
-      {transaction.result.map((hash,index)=><p key={index} className='my-2 w-40 overflow-hidden text-ellipsis whitespace-nowrap mr-4'>{timeStamp?(new Date(parseInt(timeStamp[index],16)*1000)).toLocaleString("en-GB",{hour12:false}):"Fetching..."}</p>)}
+      {transaction.result.map((hash,index)=><p key={index} className='my-2 w-40 overflow-hidden text-ellipsis whitespace-nowrap mr-4'>{timeStamp? (new Date(parseInt(timeStamp[index],16)*1000)).toLocaleString("en-GB",{hour12:false}):"Fetching..."}</p>)}
     </div>
     </div>)}
     </div>
