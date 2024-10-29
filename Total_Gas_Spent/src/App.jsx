@@ -1,21 +1,20 @@
 import { useState,useEffect } from 'react'
 import Select from 'react-select'
-import config from './config.json';
 
 import './App.css'
 
 function App() 
 {
   const [className, setClassName] = useState('');
-  const [handleDiv,setHandleDiv] = useState(false)
   const[timeStamp,setTimeStamp] = useState()  
   const[TransactionsArray,setTransactionArray] = useState([])
   const [showTransactions,setShowTransactions] = useState(false)
-  const ETHapiKey = config.VITE_API_ETHKEY;
-  const BaseapiKey = config.VITE_API_BASEKEY;
-  const OPapiKey = config.VITE_API_OPKEY;
-  const ArbapiKey =config.VITE_API_ARBKEY;
-  const LineaapiKey = config.VITE_API_LINEAKEY;
+  const ETHapiKey = import.meta.env.VITE_API_ETHKEY;
+const BaseapiKey = import.meta.env.VITE_API_BASEKEY;
+const ArbapiKey = import.meta.env.VITE_API_ARBKEY;
+const OPapiKey = import.meta.env.VITE_API_OPKEY;
+const LineaapiKey = import.meta.env.VITE_API_LINEAKEY;
+console.log(ETHapiKey)
   const [EthPrice,setEthPrice] = useState()
   const [Gas,setGas] = useState(0)
   const [transaction,setTransaction] = useState(undefined) 

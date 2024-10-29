@@ -1,22 +1,18 @@
-// vite.config.js
 import { defineConfig } from 'vite';
-import fs from 'fs';
-import path from 'path';
 import react from '@vitejs/plugin-react';
+import { readFileSync } from 'fs';
 
-const configPath = path.resolve(__dirname, 'config.json');
-let envVars = {};
+// Read and parse the config.json file
+const config = JSON.parse(readFileSync('./src/config.json', 'utf-8'));
 
-if (fs.existsSync(configPath)) {
-  const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-  envVars = Object.keys(config).reduce((acc, key) => {
-    acc[`process.env.${key}`] = config[key];
-    return acc;
-  }, {});
-}
-
+// Define the Vite configuration
 export default defineConfig({
-  define: envVars,
-   plugins: [react()],
+  plugins: [react()],
+  define: {
+    'import.meta.env.VITE_API_ETHKEY': JSON.stringify(config.VITE_API_ETHKEY),
+    'import.meta.env.VITE_API_BASEKEY': JSON.stringify(config.VITE_API_BASEKEY),
+    'import.meta.env.VITE_API_OPKEY': JSON.stringify(config.VITE_API_OPKEY),
+    'import.meta.env.VITE_API_ARBKEY': JSON.stringify(config.VITE_API_ARBKEY),
+    'import.meta.env.VITE_API_LINEAKEY': JSON.stringify(config.VITE_API_LINEAKEY),
+  },
 });
-
