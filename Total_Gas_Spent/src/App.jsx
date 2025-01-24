@@ -202,7 +202,6 @@ const handleShowTransactions = async()=>{
     throw new Error(`HTTP ERROR! ${response.status}`)
     const data2 = await response.json()
     timestamp.push(data2.result.timestamp)
-    console.log(data2)
   }
 
   setTimeStamp(timestamp)
@@ -235,7 +234,6 @@ const fetchValue = async()=>{
       if(!response.ok)
       throw new Error(`HTTP ERROR! ${response.status}`)
       data = await response.json()
-      console.log(data) 
       transactionArray.push(data)
 }
 if(chain==='Base'){
